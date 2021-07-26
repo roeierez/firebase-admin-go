@@ -79,6 +79,15 @@ type MultiFactorSettings struct {
 	EnrolledFactors []*MultiFactorInfo
 }
 
+type UpdateMultiFactorInfo struct {
+	DisplayName string `json:"displayName"`
+	PhoneNumber string `json:"phoneInfo"`
+}
+
+type UpdateMultiFactorSettings struct {
+	EnrolledFactors []*UpdateMultiFactorInfo `json:"enrollments"`
+}
+
 // UserMetadata contains additional metadata associated with a user account.
 // Timestamps are in milliseconds since epoch.
 type UserMetadata struct {
@@ -145,6 +154,11 @@ func (u *UserToCreate) PhotoURL(url string) *UserToCreate {
 // UID setter.
 func (u *UserToCreate) UID(uid string) *UserToCreate {
 	return u.set("localId", uid)
+}
+
+// MultiFactorIMultiFactorSettings setter
+func (u *UserToCreate) MultiFactorIMultiFactorSettings(multiFactorInfo *UpdateMultiFactorSettings) *UserToCreate {
+	return u.set("mfa", multiFactorInfo)
 }
 
 func (u *UserToCreate) set(key string, value interface{}) *UserToCreate {
@@ -239,6 +253,11 @@ func (u *UserToUpdate) PhoneNumber(phone string) *UserToUpdate {
 // PhotoURL setter. Set to empty string to remove the photo URL from the user account.
 func (u *UserToUpdate) PhotoURL(url string) *UserToUpdate {
 	return u.set("photoUrl", url)
+}
+
+// MultiFactorSettings setter
+func (u *UserToUpdate) MultiFactorSettings(settings *UpdateMultiFactorSettings) *UserToUpdate {
+	return u.set("mfa", settings)
 }
 
 // ProviderToLink links this user to the specified provider.
@@ -1056,6 +1075,8 @@ func (c *baseClient) createUser(ctx context.Context, user *UserToCreate) (string
 	var result struct {
 		UID string `json:"localId"`
 	}
+	b, _ := json.Marshal(request)
+	fmt.Println(string(b))
 	_, err = c.post(ctx, "/accounts", request, &result)
 	return result.UID, err
 }
@@ -1109,7 +1130,8 @@ func (c *baseClient) updateUser(ctx context.Context, uid string, user *UserToUpd
 		return err
 	}
 	request["localId"] = uid
-
+	b, _ := json.Marshal(request)
+	fmt.Println(string(b))
 	_, err = c.post(ctx, "/accounts:update", request, nil)
 	return err
 }
