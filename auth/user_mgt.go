@@ -156,8 +156,8 @@ func (u *UserToCreate) UID(uid string) *UserToCreate {
 	return u.set("localId", uid)
 }
 
-// MultiFactorIMultiFactorSettings setter
-func (u *UserToCreate) MultiFactorIMultiFactorSettings(multiFactorInfo *UpdateMultiFactorSettings) *UserToCreate {
+// MultiFactorSettings setter
+func (u *UserToCreate) MultiFactorSettings(multiFactorInfo *UpdateMultiFactorSettings) *UserToCreate {
 	return u.set("mfa", multiFactorInfo)
 }
 
